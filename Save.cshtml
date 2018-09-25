@@ -1,0 +1,112 @@
+﻿@using UniversityManagementSystem.Models
+@{
+    ViewBag.Title = "Save";
+    List<Departments> departmentList = ViewBag.Departments;
+    List<Designations> designationList = ViewBag.Designations;
+}
+
+
+<h2>Teacher Information</h2><hr />
+
+<h3>@ViewBag.Message</h3>
+<div class="row">
+    <div class="col-sm-3">
+
+    </div>
+    <div class="col-sm-5">
+        <form method="POST" id="TeacherSaveForm">
+            <table class="table">
+                <tr>
+                    <td style="text-align: right"><label for="name">Name: </label></td>
+                    <td><input id="name" type="text" name="TeacherName" class="form-control" placeholder="Please Enter Name" /></td>
+                </tr>
+                <tr>
+                    <td style="text-align: right"><label for="address">Address: </label></td>
+                    <td><input id="address" type="text" name="Address" class="form-control" placeholder="Please Enter Address" /></td>
+                </tr>
+                <tr>
+                    <td style="text-align: right"><label for="email">Email: </label></td>
+                    <td><input id="email" type="text" name="Email" class="form-control" placeholder="Please Enter Email" /></td>
+                </tr>
+                <tr>
+                    <td style="text-align: right"><label for="contactNo">Contact No: </label></td>
+                    <td><input id="contactNo" type="text" name="ContactNo" class="form-control" placeholder="Please Enter Contact No" /></td>
+                </tr>
+                <tr>
+                    <td style="text-align: right"><label for="designation">Designation: </label></td>
+                    <td>
+                        <select id="designation" name="DesignationId" class="form-control">
+                            <option value="">- - - Select - - -</option>
+                            @foreach (Designations designations in designationList)
+                            {
+                                <option value="@designations.DesignationId">@designations.DesignationName</option>
+                            }
+                        </select>
+                    </td>
+                </tr>
+                <tr>
+                    <td style="text-align: right"><label for="department">Department: </label></td>
+                    <td>
+                        <select id="department" name="DepartmentId" class="form-control">
+                            <option value="">- - - Select - - -</option>
+                            @foreach (Departments departments in departmentList)
+                            {
+                                <option value="@departments.DepartmentId">@departments.DepartmentName</option>
+                            }
+                        </select>
+                    </td>
+                </tr>
+                <tr>
+                    <td style="text-align: right"><label for="credit">Creadit to be taken: </label></td>
+                    <td><input id="credit" type="text" name="creditTaken" class="form-control" placeholder="Please Enter Taken Credit" /></td>
+                </tr>
+                <tr>
+                    <td>&nbsp;</td>
+                    <td><button type="submit" style="font-size: 20px" class="btn btn-primary"> Save </button></td>
+                </tr>
+            </table>
+        </form>
+    </div>
+    <div class="col-sm-3">
+
+    </div>
+</div>
+
+@section scripts{
+    <script src="~/Scripts/jquery-2.2.0.js"></script>
+    <script src="~/Scripts/jquery-ui-1.11.4.js"></script>
+    <script src="~/Scripts/jquery.datetimepicker.js"></script>
+    <script src="~/Scripts/jquery.validate.js"></script>
+    <script src="~/Scripts/jquery.validate.unobtrusive.min.js"></script>
+    <script src="~/Scripts/mobiscroll-2.9.5.full.min.js"></script>
+    <script>
+        $("#TeacherSaveForm").validate({
+            rules: {
+                TeacherName: "required",
+                Email: {
+                    required: true,
+                    email: true
+                },
+                DesignationId: "required",
+                DepartmentId: "required",
+                creditTaken: {
+                    required: true,
+                    min: 0.5
+                }
+            },
+            messages: {
+                TeacherName: "Please enter Teacher name",
+                Email: {
+                    required: "Please enter Email"
+
+                },
+                creditTaken: {
+                    required: "Please enter Credit",
+                    min: "Please enter Positive value"
+                },
+                DesignationId: "Please select a Designation",
+                DepartmentId: "Please select a Department"
+            }
+        });
+    </script>
+}

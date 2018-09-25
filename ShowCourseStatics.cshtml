@@ -1,0 +1,80 @@
+﻿@{
+    ViewBag.Title = "ShowCourseStatics";
+
+}
+
+<h2>Show Course Statics</h2><hr />
+<div class="row">
+
+    <div class="col-sm-4">
+
+    </div>
+    <div class="col-sm-4" style="text-align: center">
+        <table class="table table-striped table-hover">
+            <tr>
+                <td><label for="DepartmentId">Select Department:</label></td>
+                <td>
+                    <select id="DepartmentId" name="DepartmentId" class="form-control">
+                        <option value="">--Select Department--</option>
+                        @foreach (var dept in ViewBag.Departments)
+                        {
+                            <option value="@dept.DepartmentId">@dept.DepartmentName</option>
+                        }
+                    </select>
+                </td>
+            </tr>
+        </table>
+    </div>
+    <div class="col-sm-3">
+
+    </div>
+</div>
+
+<div class="row">
+
+    <div class="col-sm-2">
+
+    </div>
+    <div class="form-horizontal">
+        <div class="col-sm-8">
+            <table class="table table-striped table-hover">
+                <tr class="active">
+                    <th class="warning">Code</th>
+                    <th class="info">Name</th>
+                    <th class="active">Semester</th>
+                    <th class="warning">Assign</th>
+                </tr>
+                <tbody id="tableBody"></tbody>
+            </table>
+        </div>
+    </div>
+    <div class="col-sm-3">
+
+    </div>
+</div>
+@section scripts{
+
+    <script>
+        $(document).ready(function () {
+            $("#DepartmentId").change(function () {
+                $("#tableBody").empty();
+                var deptId = $("#DepartmentId").val();
+                var json = { departmentId: deptId };
+                $.ajax({
+                    type: "POST",
+                    url: '@Url.Action("GetCourseInformationByDepartmentId", "ShowCourseStatics")',
+                    contentType: "application/json; charset=utf-8",
+                    data: JSON.stringify(json),
+                    success: function (data) {
+
+                        $.each(data, function (index, value) {
+
+                            var row = $("<tr><td>" + value.Code + "</td><td>" + value.Name + "</td><td>" + value.Semester + "</td><td>" + value.Teacher + "</td></tr>");
+                            $("#tableBody").append(row);
+                        });
+                    }
+                });
+            });
+        });
+    </script>
+}

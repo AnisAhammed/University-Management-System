@@ -1,0 +1,140 @@
+﻿@{
+    ViewBag.Title = "EnrollStudent";
+}
+<link rel="stylesheet" href="//code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
+<script src="https://code.jquery.com/jquery-1.12.4.js"></script>
+<script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
+
+<div>
+    <hr />
+    <h2 class="slideshow">Enroll Student In a Course</h2>
+    <hr />
+
+    @if (ViewBag.Message != null)
+    {
+        <p style="font-size:20px;color:olivedrab">@ViewBag.Message</p>
+    }
+    <div class="row">
+        <div class="col-sm-3">
+
+        </div>
+        <div class="col-sm-6">
+            <form id="enrollCourse" method="POST">
+                <table class="table">
+                    <tr>
+                        <td><label for="StudentId">Registration No:</label></td>
+                        <td>
+                            <select id="StudentId" name="StudentId" class="form-control">
+                                <option value="">Select....</option>
+                                @foreach (var student in ViewBag.Students)
+                                {
+                                    <option value="@student.StudentId">@student.RegNo</option>
+                                }
+                            </select>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td><label for="StudentName">Name:</label></td>
+                        <td><input type="text" class="form-control" id="StudentName" readonly="readonly" name="StudentName" placeholder="This Field Is Read Only"></td>
+                    </tr>
+                    <tr>
+                        <td><label for="Email">Email:</label></td>
+                        <td><input type="text" class="form-control" id="Email" readonly="readonly" name="Email" placeholder="This Field Is Read Only"></td>
+                    </tr>
+                    <tr>
+                        <td><label for="DepartmentId">Department:</label></td>
+                        <td><input type="text" class="form-control" id="DepartmentId" name="DepartmentId" readonly="readonly" placeholder="This Field Is Read Only" /></td>
+                    </tr>
+                    <tr>
+                        <td><label for="CourseId">Select Course:</label></td>
+                        <td>
+                            <select id="CourseId" name="CourseId" class="form-control">
+                                <option value="">Select....</option>
+
+                            </select>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td><label for="EnrollDate">Date:</label></td>
+                        <td><input type="text" class="form-control" id="EnrollDate" name="EnrollDate" value="@DateTime.Now.ToShortDateString()"></td>
+                    </tr>
+                    <tr>
+                        <td></td>
+                        <td><button type="submit" class="btn btn-primary">Enroll</button></td>
+                    </tr>
+                </table>
+            </form>
+        </div>
+        <div class="col-sm-0">
+
+        </div>
+    </div>
+</div><br /><br />
+
+@section scripts{
+
+    <script src="~/Scripts/jquery-2.2.0.js"></script>
+    <script src="~/Scripts/jquery-ui-1.11.4.js"></script>
+    <script src="~/Scripts/jquery.datetimepicker.js"></script>
+    <script src="~/Scripts/jquery.validate.js"></script>
+    <script src="~/Scripts/jquery.validate.unobtrusive.min.js"></script>
+    <script src="~/Scripts/mobiscroll-2.9.5.full.min.js"></script>
+
+    <script>
+        $("#enrollCourse").validate({
+            rules: {
+                StudentId: "required",
+                CourseId: "required",
+                EnrollDate: "required"
+            },
+            messages: {
+                StudentId: "Please select student Registration No",
+                CourseId: "Please select Course",
+                EnrollDate: "Select the date"
+            }
+        });
+    </script>
+
+    <script>
+        $(document).ready(function () {
+            $('#EnrollDate').datepicker();
+            $("#StudentId").change(function () {
+                var studId = $("#StudentId").val();
+                $("#CourseId").empty();
+                var json = { studentId: studId };
+
+                $.ajax({
+                    type: "POST",
+                    url: '@Url.Action("GetStudentByStudentId", "EnrollStudent")',
+                    contentType: "application/json; charset=utf-8",
+                    data: JSON.stringify(json),
+                    success: function (data) {
+
+                        var name = data.Name;
+                        var email = data.Email;
+                        var dept = data.DepartmentName;
+                        $("#StudentName").val(name);
+                        $("#Email").val(email);
+                        $("#DepartmentId").val(dept);
+                    }
+                });
+
+
+                $.ajax({
+                    type: "POST",
+                    url: '@Url.Action("GetCourseByStudentId", "EnrollStudent")',
+                    contentType: "application/json; charset=utf-8",
+                    data: JSON.stringify(json),
+                    success: function (data) {
+
+                        $.each(data, function (key, value) {
+                            $("#CourseId").append('<option value=' + value.CourseId + '>' + value.CourseName + '</option>');
+
+                        });
+                    }
+                });
+
+            });
+        });
+    </script>
+}

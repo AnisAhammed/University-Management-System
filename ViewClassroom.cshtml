@@ -1,0 +1,67 @@
+﻿@using UniversityManagementSystem.Models
+
+@{
+    ViewBag.Title = "ViewClassroom";
+}
+
+<hr />
+<h2>View Class Schedule & Room Allocation Information</h2>
+<hr />
+<div class="container">
+    <fieldset>
+        <table class="table table-striped">
+            <tr>
+                <td></td>
+                <td></td>                               
+                <td><label for="DepartmentId">Department:</label></td>
+                <td>
+                    <select id="DepartmentId" class="form-control">
+                        <option value="">--Select department--</option>
+                        @foreach (var dept in ViewBag.Departments)
+                        {
+                            <option value="@dept.DepartmentId">@dept.DepartmentName</option>
+                        }
+                    </select>
+                </td>
+                <td></td>
+                <td></td>
+            </tr>
+        </table>
+        <table id="SchduleTable" class=" table table-hover table-bordered">
+            <thead class="table-striped">
+                <tr>
+                    <th class="warning">Course Code</th>
+                    <th class="info">Course Name</th>
+                    <th class="warning">Schedule Info</th>
+                </tr>
+            </thead>
+            <tbody id="SchduleTableBody">
+            
+            </tbody>
+        </table>
+    </fieldset>
+</div>
+
+
+@section Scripts {
+    <script>
+        $(document).ready(function () {
+            $("#DepartmentId").change(function () {
+                $('#SchduleTableBody').empty();
+                var deptId = $("#DepartmentId").val();             
+                var json = { departmentId: deptId };
+                $.ajax({
+                    type: "POST",
+                    url: '@Url.Action("GetClassScheduleByDepartment", "ViewClassroom")',
+                    contentType: "application/json; charset=utf-8",
+                    data: JSON.stringify(json),
+                    success: function (data) {
+                        $.each(data, function (key, value) {
+                            $("#SchduleTableBody").append('<tr><td>' + value.Code + '</td><td>' + value.Name + '</td><td>' + value.ScheduleInfo + '</td></tr>');
+                        });
+                    }
+                });
+            });
+        });
+    </script>
+}
